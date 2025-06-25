@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 👋🏻 Introduction
 
 ### If you like this pls give me a star 🙏
@@ -44,3 +45,6 @@ This will launch the API server and make it ready to handle requests.
 - ~~Calculator that calculate plant value with the weight and mutations~~
 - Host Bot | This can allow you to host an actual bot to afk and collect the Data
 - Other random features to be discovered by my brain 
+=======
+# grow-garden-api
+>>>>>>> a3637dd6dbb33d97aa5b2f3fdf52ec65a8749462
