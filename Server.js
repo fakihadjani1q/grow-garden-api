@@ -302,8 +302,9 @@ fs.readdir(funcsDir, (err, files) => {
     }
   });
 
+  const PORT = process.env.PORT || config.Port || 3000;
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server live at http://localhost:${PORT}`);
+    console.log(`Server jalan di port ${PORT}`);
     logConsole(`Available endpoints: GET /status`);
     logConsole(
       `This GAG API is made by 3itx | https://github.com/just3itx | Add Credits if you wanna modify`
