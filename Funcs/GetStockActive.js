@@ -81,25 +81,30 @@ function filterEggAndSeedStocks(data) {
   const egg = data["eggStock"];
   const seeds = data["seedsStock"];
   const gears = data["gearStock"];
+  const imageData = data["imageData"] || {};
+
+  function getImage(name) {
+    return imageData[name] || null;
+  }
 
   if (Array.isArray(egg) && egg.length > 0) {
     result["Egg"] = egg.map((item) => ({
       name: item.name,
-      image: item.image || null,
+      image: getImage(item.name),
     }));
   }
 
   if (Array.isArray(seeds) && seeds.length > 0) {
     result["Seed"] = seeds.map((item) => ({
       name: item.name,
-      image: item.image || null,
+      image: getImage(item.name),
     }));
   }
 
   if (Array.isArray(gears) && gears.length > 0) {
     result["Gear"] = gears.map((item) => ({
       name: item.name,
-      image: item.image || null,
+      image: getImage(item.name),
     }));
   }
 
