@@ -80,6 +80,7 @@ function filterEggAndSeedStocks(data) {
   const result = {};
   const egg = data["eggStock"];
   const seeds = data["seedsStock"];
+  const gears = data["gearStock"];
 
   if (Array.isArray(egg) && egg.length > 0) {
     result["Egg"] = egg.map((item) => ({
@@ -90,6 +91,13 @@ function filterEggAndSeedStocks(data) {
 
   if (Array.isArray(seeds) && seeds.length > 0) {
     result["Seed"] = seeds.map((item) => ({
+      name: item.name,
+      image: item.image || null,
+    }));
+  }
+
+  if (Array.isArray(gears) && gears.length > 0) {
+    result["Gear"] = gears.map((item) => ({
       name: item.name,
       image: item.image || null,
     }));
@@ -121,6 +129,16 @@ function register(app) {
 
       if (stocks.Seed) {
         stocks.Seed.forEach((item) => {
+          summary.push({
+            name: item.name,
+            image: item.image,
+            restockTime: restock.seed.countdown,
+          });
+        });
+      }
+
+      if (stocks.Gear) {
+        stocks.Gear.forEach((item) => {
           summary.push({
             name: item.name,
             image: item.image,
