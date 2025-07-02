@@ -1,4 +1,6 @@
 const https = require("https");
+const http = require("http");
+const { URL } = require("url");
 
 const options = {
   method: "GET",
@@ -111,7 +113,7 @@ function filterEggAndSeedStocks(data) {
   return result;
 }
 
-// 👉 Main Route
+// ✅ MAIN API Route
 function register(app) {
   app.get("/api/stock/active-summary", async (req, res) => {
     try {
@@ -119,14 +121,20 @@ function register(app) {
       const restock = calculateRestockTimes();
       const stocks = filterEggAndSeedStocks(data);
 
-      // Gabungkan semua item aktif + timer
       const summary = [];
+
+      const proxyImage = (url) =>
+        url
+          ? `http://${
+              req.headers.host
+            }/api/image-proxy?url=${encodeURIComponent(url)}`
+          : null;
 
       if (stocks.Egg) {
         stocks.Egg.forEach((item) => {
           summary.push({
             name: item.name,
-            image: item.image,
+            image: proxyImage(item.image),
             restockTime: restock.egg.countdown,
           });
         });
@@ -136,7 +144,7 @@ function register(app) {
         stocks.Seed.forEach((item) => {
           summary.push({
             name: item.name,
-            image: item.image,
+            image: proxyImage(item.image),
             restockTime: restock.seed.countdown,
           });
         });
@@ -146,7 +154,7 @@ function register(app) {
         stocks.Gear.forEach((item) => {
           summary.push({
             name: item.name,
-            image: item.image,
+            image: proxyImage(item.image),
             restockTime: restock.seed.countdown,
           });
         });
@@ -162,4 +170,38 @@ function register(app) {
   });
 }
 
-module.exports = { register };
+// ✅ IMAGE PROXY Handler
+function registerImageProxy(app) {
+  app.get("/api/image-proxy", (req, res) => {
+    const imageUrl = req.query.url;
+
+    if (!imageUrl) {
+      return res.status(400).send("Missing url parameter");
+    }
+
+    try {
+      const parsedUrl = new URL(imageUrl);
+      const client = parsedUrl.protocol === "https:" ? https : http;
+
+      const proxyReq = client.get(imageUrl, (proxyRes) => {
+        res.setHeader(
+          "Content-Type",
+          proxyRes.headers["content-type"] || "image/png"
+        );
+        proxyRes.pipe(res);
+      });
+
+      proxyReq.on("error", (err) => {
+        console.error("Proxy error:", err);
+        res.status(500).send("Failed to fetch image");
+      });
+    } catch (err) {
+      return res.status(400).send("Invalid URL");
+    }
+  });
+}
+
+module.exports = {
+  register,
+  registerImageProxy,
+};
